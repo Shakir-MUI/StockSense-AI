@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}About | StockSense AI{% endblock %}
+{% block content %}
+<div class="panel p-4 p-md-5">
+    <p class="eyebrow">ABOUT THE PROJECT</p>
+    <h1 class="h2">StockSense AI</h1>
+    <p class="lead">A Python-based application for analysing Indian stock data and estimating next-session price direction.</p>
+    <h2 class="h5 mt-4">How the signal is created</h2>
+    <ul>
+        <li>Historical daily stock data is downloaded for the selected NSE symbol.</li>
+        <li>Python calculates RSI, moving averages, daily returns and volume changes.</li>
+        <li>A Random Forest classifier estimates the probability of an upward or downward next-session move.</li>
+        <li>Simple indicator checks are used to decide whether the application displays BUY, SELL or HOLD.</li>
+    </ul>
+    <h2 class="h5 mt-4">Important limitations</h2>
+    <p class="mb-0">The market data may be delayed, incomplete or unavailable. Model probabilities and historical accuracy do not guarantee future results. A SELL signal is a warning for someone holding a stock to review their own plan; it is not a short-selling instruction.</p>
+</div>
+{% endblock %}
+

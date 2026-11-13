@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Account | StockSense AI{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card panel">
+
+        <div class="text-center mb-4">
+            <div class="auth-logo">S</div>
+            <p class="eyebrow mb-2">GET STARTED</p>
+            <h1 class="h3 fw-bold">Create your account</h1>
+            <p class="text-secondary">
+                Join StockSense AI and explore smarter stock analysis.
+            </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('register') }}">
+
+            <div class="mb-3">
+                <label for="full_name" class="form-label">Full name</label>
+                <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="full_name"
+                    name="full_name"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                    minlength="2"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input
+                    type="email"
+                    class="form-control form-control-lg"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        class="form-control form-control-lg"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 8 characters"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('password', this)"
+                    >
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="confirm_password" class="form-label">
+                    Confirm password
+                </label>
+
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        class="form-control form-control-lg"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Re-enter your password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('confirm_password', this)"
+                    >
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-divider"></div>
+
+        <p class="text-center text-secondary mb-0">
+            Already have an account?
+            <a href="{{ url_for('login') }}" class="auth-link">
+                Sign in
+            </a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function togglePassword(id, button) {
+    const input = document.getElementById(id);
+
+    if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "Hide";
+    } else {
+        input.type = "password";
+        button.textContent = "Show";
+    }
+}
+</script>
+{% endblock %}

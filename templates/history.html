@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My predictions | StockSense AI{% endblock %}
+{% block content %}
+<section class="page-heading mb-4">
+    <p class="eyebrow mb-2">YOUR RESEARCH ACTIVITY</p>
+    <h1 class="page-title">Prediction history</h1>
+    <p class="text-secondary mb-0">Your 50 most recent stock analyses.</p>
+</section>
+<div class="panel table-panel p-3 p-md-4">
+    {% if records %}
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle mb-0">
+            <thead><tr><th>Date and time</th><th>Stock</th><th>Signal</th><th>Direction</th><th>Price</th><th>UP probability</th></tr></thead>
+            <tbody>
+            {% for item in records %}
+            <tr>
+                <td class="text-secondary small">{{ item.created_at.strftime("%d %b %Y, %I:%M %p") }}</td>
+                <td class="fw-semibold">{{ item.symbol.replace('.NS', '') }}</td>
+                <td><span class="signal-badge signal-badge-{{ item.signal|lower }}">{{ item.signal }}</span></td>
+                <td>{{ item.predicted_direction }}</td>
+                <td>₹{{ "%.2f"|format(item.current_price) }}</td>
+                <td>{{ "%.1f"|format(item.up_probability) }}%</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="welcome-icon">⌁</div>
+        <h2 class="h5">No predictions yet</h2>
+        <p class="text-secondary">When you analyse a stock, the result will appear here.</p>
+        <a class="btn btn-primary" href="{{ url_for('dashboard') }}">Go to dashboard</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

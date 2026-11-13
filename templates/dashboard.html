@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | StockSense AI{% endblock %}
+{% block content %}
+<section class="page-heading d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <p class="eyebrow mb-2">INDIAN EQUITY MARKET</p>
+        <h1 class="page-title">Good to see you, {{ current_user.full_name.split()[0] }}.</h1>
+        <p class="text-secondary mb-0">Analyse a stock and review its estimated next-session direction.</p>
+    </div>
+    <div class="market-status"><span class="status-dot"></span> Analysis workspace</div>
+</section>
+
+<section class="panel analysis-panel p-3 p-md-4 mb-4">
+    <div class="section-heading mb-3">
+        <div>
+            <h2 class="h5 mb-1">Analyse a stock</h2>
+            <p class="small text-secondary mb-0">Enter an NSE ticker to generate a model analysis.</p>
+        </div>
+        <span class="section-tag">AI ANALYSIS</span>
+    </div>
+    
+    <form method="post" class="row g-3 analysis-form">
+
+        <div class="col-md-6">
+            <label for="symbol" class="form-label">
+                NSE stock symbol
+            </label>
+
+            <input
+                class="form-control form-control-lg"
+                id="symbol"
+                name="symbol"
+                placeholder="e.g. RELIANCE or TCS"
+                autocomplete="off"
+                required
+            >
+
+            <div class="form-text">
+                Enter the ticker without .NS. The NSE suffix is added automatically.
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label for="period" class="form-label">
+                Historical period
+            </label>
+
+            <select
+                class="form-select form-select-lg"
+                id="period"
+                name="period"
+            >
+                <option value="1y">1 year</option>
+                <option value="2y" selected>2 years</option>
+                <option value="5y">5 years</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label d-block invisible">
+                Action
+            </label>
+
+            <button class="btn btn-primary btn-lg w-100" type="submit">
+                Analyse stock <span aria-hidden="true">→</span>
+            </button>
+        </div>
+
+    </form>
+
+    <div class="suggested-symbols mt-3">
+        <span>Popular:</span>
+        {% for ticker in ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK'] %}
+        <button type="button" class="ticker-chip" data-symbol="{{ ticker }}">{{ ticker }}</button>
+        {% endfor %}
+    </div>
+</section>
+
+{% if result %}
+<section class="row g-3 mb-4">
+    <div class="col-lg-4">
+        <div class="panel signal-panel p-4 h-100">
+            <p class="eyebrow">MODEL SIGNAL</p>
+            <div class="signal signal-{{ result.signal|lower }}">{{ result.signal }}</div>
+            <p class="text-secondary mb-1">{{ result.symbol }} <span class="dot-separator">·</span> {{ result.last_date }}</p>
+            <h2 class="price-value">₹{{ "%.2f"|format(result.current_price) }}</h2>
+            <p class="small text-secondary mt-3 mb-0">{{ result.explanation }}</p>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="row g-3 h-100">
+            <div class="col-sm-6">
+                <div class="panel metric-card p-3 h-100">
+                    <p class="eyebrow">PREDICTED DIRECTION</p>
+                    <div class="metric-value">{{ result.direction }}</div>
+                    <p class="text-secondary small mb-0">Estimated next available trading session</p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel metric-card p-3 h-100">
+                    <p class="eyebrow">MODEL UP PROBABILITY</p>
+                    <div class="metric-value">{{ result.up_probability }}%</div>
+                    <p class="text-secondary small mb-0">Classifier score, not a guarantee</p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel metric-card p-3 h-100">
+                    <p class="eyebrow">HISTORICAL TEST ACCURACY</p>
+                    <div class="metric-value">{{ result.historical_accuracy }}%</div>
+                    <p class="text-secondary small mb-0">Chronological holdout performance</p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel metric-card p-3 h-100">
+                    <p class="eyebrow">RSI (14)</p>
+                    <div class="metric-value">{{ result.rsi }}</div>
+                    <p class="text-secondary small mb-0">20-day SMA: ₹{{ "%.2f"|format(result.sma_20) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="panel chart-panel p-3 p-md-4 mb-4">
+    <div class="section-heading">
+        <div>
+            <h2 class="h5 mb-1">Recent closing prices</h2>
+            <p class="small text-secondary mb-0">Last 90 available trading sessions · {{ result.symbol }}</p>
+        </div>
+        <span class="section-tag">PRICE HISTORY</span>
+    </div>
+    <div id="priceChart" class="chart"></div>
+</section>
+{% else %}
+<section class="welcome-panel panel p-4 p-md-5">
+    <div class="welcome-icon">↗</div>
+    <p class="eyebrow mb-2">YOUR ANALYSIS STARTS HERE</p>
+    <h2 class="h4">Choose a stock to get started</h2>
+    <p class="text-secondary mb-0">Search an NSE-listed company above.</p>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if result %}
+<script>
+    const labels = {{ chart_labels | tojson }};
+    const prices = {{ chart_prices | tojson }};
+    Plotly.newPlot("priceChart", [{
+        x: labels,
+        y: prices,
+        type: "scatter",
+        mode: "lines",
+        line: { color: "#4f9cf9", width: 2.5 },
+        fill: "tozeroy",
+        fillcolor: "rgba(79,156,249,0.09)",
+        hovertemplate: "%{x}<br>₹%{y:.2f}<extra></extra>"
+    }], {
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        margin: { t: 16, r: 16, b: 42, l: 62 },
+        xaxis: { gridcolor: "#23334a", color: "#91a3bb", zeroline: false },
+        yaxis: { gridcolor: "#23334a", color: "#91a3bb", title: "Price (₹)", zeroline: false },
+        font: { color: "#dce7f5", family: "Inter, system-ui, sans-serif" },
+        hoverlabel: { bgcolor: "#172438", bordercolor: "#344761", font: { color: "#fff" } }
+    }, { responsive: true, displayModeBar: false });
+</script>
+{% endif %}
+{% endblock %}

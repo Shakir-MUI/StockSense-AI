@@ -1,0 +1,106 @@
+
+{% extends "base.html" %}
+
+{% block title %}Sign In | StockSense AI{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card panel">
+
+        <div class="text-center mb-4">
+            <div class="auth-logo">S</div>
+            <p class="eyebrow mb-2">WELCOME BACK</p>
+            <h1 class="h3 fw-bold">Sign in to StockSense AI</h1>
+            <p class="text-secondary">
+                Access your AI-powered stock market insights.
+            </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('login') }}">
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input
+                    type="email"
+                    class="form-control form-control-lg"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        class="form-control form-control-lg"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        onclick="togglePassword('password', this)"
+                    >
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="remember"
+                        id="remember"
+                    >
+                    <label class="form-check-label text-secondary"
+                           for="remember">
+                        Remember me
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="auth-divider"></div>
+
+        <p class="text-center text-secondary mb-0">
+            Don't have an account?
+            <a href="{{ url_for('register') }}" class="auth-link">
+                Create account
+            </a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function togglePassword(id, button) {
+    const input = document.getElementById(id);
+
+    if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "Hide";
+    } else {
+        input.type = "password";
+        button.textContent = "Show";
+    }
+}
+</script>
+{% endblock %}
